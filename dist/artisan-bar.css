@@ -111,6 +111,14 @@
 .artisan-bar-prompt-user { color: #34d399; font-weight: 700; }
 .artisan-bar-prompt-sep { color: #fff; font-weight: 700; }
 
+/* Inner row containers use display:contents to flow into parent flex */
+.artisan-bar-password-row,
+.artisan-bar-cmd-row {
+    display: contents;
+}
+.artisan-bar-password-row > span,
+.artisan-bar-cmd-row > span { flex-shrink: 0; }
+
 .artisan-bar-input,
 .artisan-bar-password-input {
     flex: 1;

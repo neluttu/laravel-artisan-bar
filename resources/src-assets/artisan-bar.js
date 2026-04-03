@@ -265,6 +265,12 @@
         },
 
         async doLogout() {
+            // In app-auth mode, /logout only clears the bar session, not the Laravel session
+            if (this.config.authMode === 'app-auth') {
+                this.addOutput('/logout', true, 'In app-auth mode, use your application\'s logout to end the session.');
+                return;
+            }
+
             try {
                 await fetch(this.config.logoutUrl, {
                     method: 'POST',
@@ -278,7 +284,7 @@
 
             this.authenticated = false;
             this.cmd = '';
-            this.addOutput('/logout', true, 'Logged out.');
+            this.addOutput('/logout', true, 'Logged out from Artisan Bar.');
             this.render();
         },
 
@@ -390,8 +396,8 @@
             main.style.display = this.open ? 'block' : 'none';
 
             const needsPassword = !this.authenticated && this.config.hasPasswordAuth;
-            pwdRow.style.display = needsPassword ? 'flex' : 'none';
-            cmdRow.style.display = needsPassword ? 'none' : 'flex';
+            pwdRow.style.display = needsPassword ? 'contents' : 'none';
+            cmdRow.style.display = needsPassword ? 'none' : 'contents';
 
             spinner.style.display = this.loading ? 'block' : 'none';
             clearBtn.style.display = this.outputs.length > 0 ? 'inline' : 'none';

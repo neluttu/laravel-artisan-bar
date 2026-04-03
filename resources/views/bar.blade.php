@@ -54,23 +54,26 @@
 
         {{-- Command bar --}}
         <div class="artisan-bar-bar">
-            {{-- Password input --}}
-            <div class="artisan-bar-input-row artisan-bar-password-row" style="display:none;">
-                <span class="artisan-bar-prompt-sep">Password:</span>
-                <input type="password" class="artisan-bar-password-input" placeholder="Enter password..." autocomplete="off" spellcheck="false">
-                <div class="artisan-bar-spinner" style="display:none;"></div>
-                <button class="artisan-bar-btn artisan-bar-btn-clear" style="display:none;">CLEAR</button>
-                <button class="artisan-bar-btn artisan-bar-btn-minimize">
-                    <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" /></svg>
-                </button>
-            </div>
+            <div class="artisan-bar-input-row">
+                {{-- Password input (shown when not authenticated) --}}
+                <div class="artisan-bar-password-row" style="display:none;">
+                    <span class="artisan-bar-prompt-sep">Password:</span>
+                    <input type="password" class="artisan-bar-password-input" placeholder="Enter password..." autocomplete="off" spellcheck="false">
+                </div>
 
-            {{-- Command input --}}
-            <div class="artisan-bar-input-row artisan-bar-cmd-row">
-                <span>
-                    <span class="artisan-bar-prompt-user">{!! e($promptUser . '@' . $promptHost) !!}</span><span class="artisan-bar-prompt-sep">$</span>
-                </span>
-                <input type="text" class="artisan-bar-input" placeholder="/help" autocomplete="off" spellcheck="false">
+                {{-- Command input (shown when authenticated) --}}
+                <div class="artisan-bar-cmd-row" style="display:none;">
+                    <span>
+                        @if(config('artisan-bar.prompt.show_hostname', true))
+                            <span class="artisan-bar-prompt-user">{!! e($promptUser . '@' . $promptHost) !!}</span><span class="artisan-bar-prompt-sep">$</span>
+                        @else
+                            <span class="artisan-bar-prompt-user">{!! e($promptUser) !!}</span><span class="artisan-bar-prompt-sep">$</span>
+                        @endif
+                    </span>
+                    <input type="text" class="artisan-bar-input" placeholder="/help" autocomplete="off" spellcheck="false">
+                </div>
+
+                {{-- Shared controls --}}
                 <div class="artisan-bar-spinner" style="display:none;"></div>
                 <button class="artisan-bar-btn artisan-bar-btn-clear" style="display:none;">CLEAR</button>
                 <button class="artisan-bar-btn artisan-bar-btn-minimize">
