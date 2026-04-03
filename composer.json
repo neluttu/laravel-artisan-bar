@@ -1,0 +1,34 @@
+{
+    "name": "neluttu/laravel-artisan-bar",
+    "description": "A safe, self-contained admin command bar for Laravel. Run artisan and shell commands from the browser.",
+    "keywords": ["laravel", "artisan", "admin", "command-bar", "debugbar", "terminal", "devtools"],
+    "license": "MIT",
+    "type": "library",
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^12.0|^13.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0|^11.0",
+        "phpunit/phpunit": "^11.0|^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neluttu\\ArtisanBar\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neluttu\\ArtisanBar\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Neluttu\\ArtisanBar\\ArtisanBarServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
