@@ -189,18 +189,17 @@ class ArtisanBarController extends Controller
     {
         $timeout = config('artisan-bar.command_timeout', 30);
         $maxOutput = config('artisan-bar.max_output_length', 65536);
-
-        $process = $isShell
-            ? Process::fromShellCommandline($command, base_path())
-            : new Process($command, base_path());
-
-        if ($timeout > 0) {
-            $process->setTimeout((float) $timeout);
-        }
-
         $startTime = microtime(true);
 
         try {
+            $process = $isShell
+                ? Process::fromShellCommandline($command, base_path())
+                : new Process($command, base_path());
+
+            if ($timeout > 0) {
+                $process->setTimeout((float) $timeout);
+            }
+
             $process->run();
         } catch (ProcessTimedOutException) {
             $durationMs = (int) ((microtime(true) - $startTime) * 1000);

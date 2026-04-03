@@ -239,9 +239,10 @@
                     body: JSON.stringify({ cmd, confirmed }),
                 });
 
-                if (res.status === 401) {
+                if (res.status === 401 || res.status === 403) {
                     this.authenticated = false;
-                    this.addOutput(cmd, false, 'Session expired. Please login again.');
+                    const msg = res.status === 403 ? 'Access denied.' : 'Not authenticated. Please login.';
+                    this.addOutput(cmd, false, msg);
                     this.loading = false;
                     this.render();
                     return;

@@ -11,6 +11,42 @@ use Illuminate\Support\Facades\Hash;
 class ArtisanBarAuth
 {
     /**
+     * Determine if the bar should be rendered on the page.
+     * For password mode: always render (UI shows login form).
+     * For app-auth mode: only render if user is authorized.
+     * For either mode: render if user is authorized OR password auth is available.
+     */
+    public static function shouldRender(Request $request): bool
+    {
+        if (! static::isEnabled()) {
+            return false;
+        }
+
+        $mode = config('artisan-bar.auth_mode', 'password');
+
+        // Password mode: always show (UI handles login/command state)
+        if ($mode === 'password') {
+            return true;
+        }
+
+        // App-auth mode: only show if user is authorized
+        if ($mode === 'app-auth') {
+            $auth = static::authorize($request);
+
+            return $auth->allowed;
+        }
+
+        // Either mode: show if authorized OR password login is available
+        $auth = static::authorize($request);
+
+        if ($auth->allowed) {
+            return true;
+        }
+
+        return static::hasPasswordAuth();
+    }
+
+    /**
      * Check if the bar is enabled based on environment and config.
      */
     public static function isEnabled(): bool

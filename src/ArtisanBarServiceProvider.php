@@ -32,9 +32,9 @@ class ArtisanBarServiceProvider extends ServiceProvider
             return Limit::perMinute($maxAttempts)->by($request->ip());
         });
 
-        // Blade directive
+        // Blade directive - checks isEnabled() and hides bar for unauthorized users in app-auth mode
         Blade::directive('artisanBar', function () {
-            return "<?php if (\Neluttu\ArtisanBar\ArtisanBarAuth::isEnabled()) { echo view('artisan-bar::bar')->render(); } ?>";
+            return "<?php if (\Neluttu\ArtisanBar\ArtisanBarAuth::shouldRender(request())) { echo view('artisan-bar::bar')->render(); } ?>";
         });
 
         // Publishables (always available)
