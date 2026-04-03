@@ -48,7 +48,9 @@ class ArtisanBarController extends Controller
         $auth = ArtisanBarAuth::authorize($request);
 
         if (! $auth->allowed) {
-            return response()->json(['ok' => false, 'output' => 'Not authenticated.'], $auth->status);
+            $message = $auth->status === 403 ? 'Access denied.' : 'Not authenticated.';
+
+            return response()->json(['ok' => false, 'output' => $message], $auth->status);
         }
 
         $cmd = trim($request->input('cmd', ''));
