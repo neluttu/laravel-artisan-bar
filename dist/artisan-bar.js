@@ -53,11 +53,8 @@
                 this.config.shellMode = d.shellMode || 'disabled';
             } catch (e) {}
 
-            // If app-auth mode or either with no password, assume authenticated
-            if (this.config.authMode === 'app-auth' ||
-                (this.config.authMode === 'either' && !this.config.hasPasswordAuth)) {
-                this.authenticated = true;
-            }
+            // Use server-derived auth state
+            this.authenticated = d.authenticated === '1';
 
             this.bindEvents();
             this.render();

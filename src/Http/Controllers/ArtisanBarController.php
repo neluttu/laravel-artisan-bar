@@ -24,6 +24,7 @@ class ArtisanBarController extends Controller
         $password = $request->input('password', '');
 
         if (ArtisanBarAuth::verifyPassword($password)) {
+            $request->session()->regenerate();
             ArtisanBarAuth::setSession($request);
             $this->auditLog('login:success', $request);
 
@@ -125,10 +126,31 @@ class ArtisanBarController extends Controller
     }
 
     /**
-     * Execute an artisan command via Artisan::call() (in-process).
+     * Execute an artisan command as subprocess via Symfony Process.
+     * Falls back to Artisan::call() if artisan binary is not available (e.g. testbench).
      */
     protected function executeArtisan(string $baseCmd, array $args, string $logCommand, $auth, Request $request): JsonResponse
     {
+        $artisanPath = base_path('artisan');
+        $vendorAutoload = base_path('vendor/autoload.php');
+
+        // Run as subprocess only in real Laravel apps (not testbench)
+        if (file_exists($artisanPath) && file_exists($vendorAutoload)) {
+            $processArgs = [config('artisan-bar.php_binary', PHP_BINARY), $artisanPath, $baseCmd];
+
+            foreach ($args as $key => $value) {
+                if (is_bool($value) && $value) {
+                    $processArgs[] = $key;
+                } elseif (! is_bool($value)) {
+                    $processArgs[] = $key;
+                    $processArgs[] = (string) $value;
+                }
+            }
+
+            return $this->executeProcess($processArgs, false, $logCommand, $auth, $request);
+        }
+
+        // Fallback: in-process (for testbench or environments without artisan binary)
         $maxOutput = config('artisan-bar.max_output_length', 65536);
         $startTime = microtime(true);
 
@@ -187,6 +209,14 @@ class ArtisanBarController extends Controller
             return response()->json([
                 'ok' => false,
                 'output' => "Command timed out after {$timeout}s.",
+            ]);
+        } catch (\Throwable $e) {
+            $durationMs = (int) ((microtime(true) - $startTime) * 1000);
+            $this->auditLog("command:{$logCommand}", $request, $auth, false, 1, $durationMs);
+
+            return response()->json([
+                'ok' => false,
+                'output' => 'Command execution failed: ' . $e->getMessage(),
             ]);
         }
 

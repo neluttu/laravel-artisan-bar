@@ -7,6 +7,10 @@
     $commands = json_encode(config('artisan-bar.commands', []), JSON_THROW_ON_ERROR);
     $shellAliases = json_encode(config('artisan-bar.shell_aliases', []), JSON_THROW_ON_ERROR);
 
+    // Derive actual auth state from server
+    $authResult = \Neluttu\ArtisanBar\ArtisanBarAuth::authorize(request());
+    $isAuthenticated = $authResult->allowed ? '1' : '0';
+
     // Try to get current user name for prompt
     if (in_array($authMode, ['app-auth', 'either']) && auth()->check()) {
         $user = auth()->user();
@@ -23,6 +27,7 @@
      data-csrf-token="{{ csrf_token() }}"
      data-auth-mode="{{ $authMode }}"
      data-has-password-auth="{{ $hasPasswordAuth }}"
+     data-authenticated="{{ $isAuthenticated }}"
      data-prompt-user="{{ $promptUser }}"
      data-prompt-host="{{ $promptHost }}"
      data-commands="{{ $commands }}"
