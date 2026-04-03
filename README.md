@@ -140,7 +140,7 @@ Every command is logged with: auth_mode, auth_method, actor, ip, command, ok, ex
 - Tab to complete first suggestion
 - `/help` — shows all available commands
 - `/clear` — clears output
-- `/logout` — ends session
+- `/logout` — clears bar session (in app-auth mode, use your app's logout)
 - Color-coded output (green=success, red=error, yellow=confirmation)
 - Rate-limited login (configurable)
 - Structured audit logging
